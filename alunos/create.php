@@ -14,11 +14,11 @@ if (isset($data->nome) && isset($data->data_nascimento)) {
     $stmt->bindParam(':turma', $turma);
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "sucesso", "mensagem" => "Aluno criado com sucesso"]);
+        echo json_encode(["status" => "sucesso", "mensagem" => "aluno criado com sucesso"]);
     } else {
-        echo json_encode(["status" => "erro", "mensagem" => "Erro ao criar aluno"]);
+        echo json_encode(["status" => "erro", "mensagem" => "erro ao criar aluno"]);
     }
 } else {
-    echo json_encode(["status" => "erro", "mensagem" => "Nome e data de nascimento são obrigatórios"]);
+    echo json_encode(["status" => "erro", "mensagem" => "nome e data de nascimento sao obrigatorios"]);
 }
 ?>

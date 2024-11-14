@@ -8,7 +8,7 @@ if ($id) {
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     $aluno = $stmt->fetch(PDO::FETCH_ASSOC);
-    echo json_encode($aluno ? $aluno : ["status" => "erro", "mensagem" => "Aluno não encontrado"]);
+    echo json_encode($aluno ? $aluno : ["status" => "erro", "mensagem" => "aluno nao encontrado"]);
 } else {
     $stmt = $pdo->query("SELECT * FROM alunos");
     $alunos = $stmt->fetchAll(PDO::FETCH_ASSOC);

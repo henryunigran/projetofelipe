@@ -13,6 +13,6 @@ function dispatch($requestedPath) {
     if (array_key_exists($requestedPath, $routes)) {
         $routes[$requestedPath](); 
     } else {
-        echo "404 - Página não encontrada";
+        echo "404 - pagina nao encontrada";
     }
 }

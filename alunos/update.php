@@ -12,11 +12,11 @@ if ($id && isset($data->nome) && isset($data->data_nascimento)) {
     $stmt->bindParam(':turma', $data->turma);
 
     if ($stmt->execute()) {
-        echo json_encode(["status" => "sucesso", "mensagem" => "Aluno atualizado com sucesso"]);
+        echo json_encode(["status" => "sucesso", "mensagem" => "aluno atualizado com sucesso"]);
     } else {
-        echo json_encode(["status" => "erro", "mensagem" => "Erro ao atualizar aluno"]);
+        echo json_encode(["status" => "erro", "mensagem" => "erro ao atualizar aluno"]);
     }
 } else {
-    echo json_encode(["status" => "erro", "mensagem" => "ID, nome e data de nascimento são obrigatórios"]);
+    echo json_encode(["status" => "erro", "mensagem" => "ID, nome e data de nascimento sao obrigatorios"]);
 }
 ?>
