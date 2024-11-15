@@ -3,15 +3,15 @@ require 'routes/router.php';
 
 
 route('/', function() {
-    echo "bem-vindo a pagina inicial";
+    echo "bem-vindo";
 });
 
-route('/sobre', function() {
-    echo "esta e a pagina sobre.";
+route('/gerenciamento', function() {
+    include "index.html";
 });
 
-route('/contato', function() {
-    echo "pagina de contato.";
+route('/registro', function() {
+    include 'registro_notas.html';
 });
 
 
