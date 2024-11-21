@@ -1,25 +1,4 @@
 <?php
-require 'routes/router.php';
-
-
-route('/', function() {
-    echo "bem-vindo a pagina inicial";
-});
-
-route('/sobre', function() {
-    echo "esta e a pagina sobre.";
-});
-
-route('/contato', function() {
-    echo "pagina de contato.";
-});
-
-
-$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-
-dispatch($requestedPath);
-
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -35,10 +14,8 @@ $requestUri = $_SERVER['REQUEST_URI'];
 
 $requestUri = explode('?', $requestUri)[0];
 
-
 $alunoController = new AlunoController();
 $notasController = new NotasController();
-
 
 switch (true) {
 
@@ -64,6 +41,7 @@ switch (true) {
         $id = $matches[1];
         $alunoController->deleteAluno($id);
         break;
+
 
     case $requestUri === '/api/notas' && $requestMethod === 'GET':
         $notasController->getAllNotas();
