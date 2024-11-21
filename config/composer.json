@@ -2,7 +2,7 @@
     "name": "laboratorio/henry",
     "autoload": {
         "psr-4": {
-            "Laboratorio\\LucasSyama\\": "src/"
+            "Laboratorio\\Henry\\": "src/"
         }
     },
     "autoload-dev" : {

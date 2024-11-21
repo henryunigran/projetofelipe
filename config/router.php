@@ -1,36 +1,44 @@
 <?php
 
-class Router
+
+function route($path, $callback)
 {
-    private $routes = [];
-
-    public function addRoute(string $method, string $path, callable $handler)
-    {
-        $this->routes[] = [
-            'method' => strtoupper($method),
-            'path' => $path,
-            'handler' => $handler
-        ];
-    }
+    global $routes; 
+    $routes[$path] = $callback;
+}
 
 
-    public function dispatch()
-    {
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
-        $requestUri = explode('?', $_SERVER['REQUEST_URI'])[0];
+function dispatch($path)
+{
+    global $routes;
 
-        foreach ($this->routes as $route) {
-            $pathPattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $route['path']);
-            $pathPattern = str_replace('/', '\/', $pathPattern);
+    if (isset($routes[$path])) {
 
-            if ($route['method'] === $requestMethod && preg_match('/^' . $pathPattern . '$/', $requestUri, $matches)) {
-                array_shift($matches); 
-                return call_user_func_array($route['handler'], $matches);
-            }
-        }
+        $routes[$path]();
+    } else {
 
-        header("HTTP/1.0 404 Not Found");
-        echo json_encode(["message" => "Rota não encontrada"]);
-        exit();
+        http_response_code(404);
+        echo "Página não encontrada!";
     }
 }
+
+
+$routes = [];
+
+
+route('/', function() {
+    echo "Bem-vindo ao site!";
+});
+
+route('/gerenciamento', function() {
+    include "index.html";
+});
+
+route('/registro', function() {
+    include 'registro_notas.html'; 
+});
+
+$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+
+dispatch($requestedPath);
