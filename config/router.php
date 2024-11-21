@@ -1,18 +1,36 @@
 <?php
 
-$routes = [];
+class Router
+{
+    private $routes = [];
 
-function route($path, $callback) {
-    global $routes;
-    $routes[$path] = $callback;
-}
+    public function addRoute(string $method, string $path, callable $handler)
+    {
+        $this->routes[] = [
+            'method' => strtoupper($method),
+            'path' => $path,
+            'handler' => $handler
+        ];
+    }
 
-function dispatch($requestedPath) {
-    global $routes;
 
-    if (array_key_exists($requestedPath, $routes)) {
-        $routes[$requestedPath](); 
-    } else {
-        echo "404 - pagina nao encontrada";
+    public function dispatch()
+    {
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        $requestUri = explode('?', $_SERVER['REQUEST_URI'])[0];
+
+        foreach ($this->routes as $route) {
+            $pathPattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $route['path']);
+            $pathPattern = str_replace('/', '\/', $pathPattern);
+
+            if ($route['method'] === $requestMethod && preg_match('/^' . $pathPattern . '$/', $requestUri, $matches)) {
+                array_shift($matches); 
+                return call_user_func_array($route['handler'], $matches);
+            }
+        }
+
+        header("HTTP/1.0 404 Not Found");
+        echo json_encode(["message" => "Rota não encontrada"]);
+        exit();
     }
 }

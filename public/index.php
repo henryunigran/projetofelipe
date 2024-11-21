@@ -1,25 +1,4 @@
 <?php
-require 'routes/router.php';
-
-
-route('/', function() {
-    echo "bem-vindo a pagina inicial";
-});
-
-route('/sobre', function() {
-    echo "esta e a pagina sobre.";
-});
-
-route('/contato', function() {
-    echo "pagina de contato.";
-});
-
-
-$requestedPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-
-dispatch($requestedPath);
-
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -27,70 +6,57 @@ error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
+
 require_once '../controllers/AlunoController.php';
 require_once '../controllers/NotasController.php';
-
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$requestUri = $_SERVER['REQUEST_URI'];
-
-$requestUri = explode('?', $requestUri)[0];
-
+require_once '../core/Router.php';
 
 $alunoController = new AlunoController();
 $notasController = new NotasController();
 
 
-switch (true) {
+$router = new Router();
 
-    case $requestUri === '/api/alunos' && $requestMethod === 'GET':
-        $alunoController->getAllAlunos();
-        break;
+$router->addRoute('GET', '/api/alunos', function () use ($alunoController) {
+    $alunoController->getAllAlunos();
+});
 
-    case $requestUri === '/api/alunos' && $requestMethod === 'POST':
-        $alunoController->createAluno();
-        break;
+$router->addRoute('POST', '/api/alunos', function () use ($alunoController) {
+    $alunoController->createAluno();
+});
 
-    case preg_match('/\/api\/alunos\/(\d+)/', $requestUri, $matches) && $requestMethod === 'GET':
-        $id = $matches[1];
-        $alunoController->getAlunoById($id);
-        break;
+$router->addRoute('GET', '/api/alunos/{id}', function ($id) use ($alunoController) {
+    $alunoController->getAlunoById($id);
+});
 
-    case preg_match('/\/api\/alunos\/(\d+)/', $requestUri, $matches) && $requestMethod === 'PUT':
-        $id = $matches[1];
-        $alunoController->updateAluno($id);
-        break;
+$router->addRoute('PUT', '/api/alunos/{id}', function ($id) use ($alunoController) {
+    $alunoController->updateAluno($id);
+});
 
-    case preg_match('/\/api\/alunos\/(\d+)/', $requestUri, $matches) && $requestMethod === 'DELETE':
-        $id = $matches[1];
-        $alunoController->deleteAluno($id);
-        break;
-
-    case $requestUri === '/api/notas' && $requestMethod === 'GET':
-        $notasController->getAllNotas();
-        break;
-
-    case $requestUri === '/api/notas' && $requestMethod === 'POST':
-        $notasController->createNota();
-        break;
-
-    case preg_match('/\/api\/notas\/(\d+)/', $requestUri, $matches) && $requestMethod === 'GET':
-        $id = $matches[1];
-        $notasController->getNotaById($id);
-        break;
-
-    case preg_match('/\/api\/notas\/(\d+)/', $requestUri, $matches) && $requestMethod === 'PUT':
-        $id = $matches[1];
-        $notasController->updateNota($id);
-        break;
-
-    case preg_match('/\/api\/notas\/(\d+)/', $requestUri, $matches) && $requestMethod === 'DELETE':
-        $id = $matches[1];
-        $notasController->deleteNota($id);
-        break;
+$router->addRoute('DELETE', '/api/alunos/{id}', function ($id) use ($alunoController) {
+    $alunoController->deleteAluno($id);
+});
 
 
-    default:
-        header("HTTP/1.0 404 Not Found");
-        echo json_encode(["message" => "Rota não encontrada"]);
-        break;
-}
+$router->addRoute('GET', '/api/notas', function () use ($notasController) {
+    $notasController->getAllNotas();
+});
+
+$router->addRoute('POST', '/api/notas', function () use ($notasController) {
+    $notasController->createNota();
+});
+
+$router->addRoute('GET', '/api/notas/{id}', function ($id) use ($notasController) {
+    $notasController->getNotaById($id);
+});
+
+$router->addRoute('PUT', '/api/notas/{id}', function ($id) use ($notasController) {
+    $notasController->updateNota($id);
+});
+
+$router->addRoute('DELETE', '/api/notas/{id}', function ($id) use ($notasController) {
+    $notasController->deleteNota($id);
+});
+
+
+$router->dispatch();
